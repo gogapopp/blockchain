@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/gogapopp/blockchain/crypto"
@@ -42,6 +41,5 @@ func TestNewTransaction(t *testing.T) {
 	input.Signature = sig.Bytes()
 
 	assert.True(t, VerifyTransaction(tx))
-
-	fmt.Printf("%+v\n", tx)
+	// fmt.Printf("%+v\n", tx)
 }

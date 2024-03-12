@@ -95,12 +95,6 @@ func (n *Node) addPeer(c proto.NodeClient, v *proto.Version) {
 		"height", v.Height)
 }
 
-func (n *Node) deletePeer(c proto.NodeClient) {
-	n.peerLock.Lock()
-	defer n.peerLock.Unlock()
-	delete(n.peers, c)
-}
-
 func (n *Node) bootstrapNetwork(addrs []string) error {
 	for _, addr := range addrs {
 		if !n.canConnectWith(addr) {
@@ -116,6 +110,12 @@ func (n *Node) bootstrapNetwork(addrs []string) error {
 	}
 
 	return nil
+}
+
+func (n *Node) deletePeer(c proto.NodeClient) {
+	n.peerLock.Lock()
+	defer n.peerLock.Unlock()
+	delete(n.peers, c)
 }
 
 func (n *Node) dialRemoteNode(addr string) (proto.NodeClient, *proto.Version, error) {
