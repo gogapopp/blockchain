@@ -2,6 +2,7 @@ package node
 
 import (
 	"encoding/hex"
+	"fmt"
 	"testing"
 
 	"github.com/gogapopp/blockchain/crypto"
@@ -69,7 +70,6 @@ func TestAddBlockWithTX(t *testing.T) {
 
 	ftt, err := chain.txStore.Get("b75da3959870372d0e8d673a3a2a16a143ec6031aa1b40875d2ee018735ec151")
 	assert.Nil(t, err)
-	// fmt.Println(ftt)
 
 	inputs := []*proto.TxInput{
 		{
@@ -93,6 +93,10 @@ func TestAddBlockWithTX(t *testing.T) {
 		Inputs:  inputs,
 		Outputs: ouputs,
 	}
+
+	sig := types.SignTransaction(privKey, tx)
+	tx.Inputs[0].Signature = sig.Bytes()
+
 	block.Transactions = append(block.Transactions, tx)
 	require.Nil(t, chain.AddBlock(block))
 	txHash := hex.EncodeToString(types.HashTransaction(tx))
@@ -100,4 +104,12 @@ func TestAddBlockWithTX(t *testing.T) {
 	fetchedTx, err := chain.txStore.Get(txHash)
 	assert.Nil(t, err)
 	assert.Equal(t, tx, fetchedTx)
+
+	// check if their is an UTXO that is unpent
+	address := crypto.AddressFromBytes(tx.Outputs[1].Address)
+	key := fmt.Sprintf("%s_%s", address, txHash)
+
+	utxo, err := chain.utxoStore.Get(key)
+	assert.Nil(t, err)
+	fmt.Println(utxo)
 }
