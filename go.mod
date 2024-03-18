@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/cbergoon/merkletree v0.2.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
