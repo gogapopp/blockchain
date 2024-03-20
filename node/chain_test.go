@@ -102,7 +102,6 @@ func TestAddBlockWithTX(t *testing.T) {
 		privKey   = crypto.NewPrivateKeyFromSeedStr(godSeed)
 		recipient = crypto.GeneratePrivateKey().Public().Address().Bytes()
 	)
-
 	prevTx, err := chain.txStore.Get("b75da3959870372d0e8d673a3a2a16a143ec6031aa1b40875d2ee018735ec151")
 	assert.Nil(t, err)
 

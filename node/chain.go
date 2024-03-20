@@ -97,6 +97,18 @@ func (c *Chain) addBlock(b *proto.Block) error {
 				return err
 			}
 		}
+
+		for _, input := range tx.Inputs {
+			key := fmt.Sprintf("%s_%d", hex.EncodeToString(input.PrevTxHash), input.PrevOutIndex)
+			utxo, err := c.utxoStore.Get(key)
+			if err != nil {
+				return err
+			}
+			utxo.Spent = true
+			if err := c.utxoStore.Put(utxo); err != nil {
+				return err
+			}
+		}
 	}
 
 	return c.blockStore.Put(b)
@@ -180,7 +192,6 @@ func (c *Chain) ValidateTransaction(tx *proto.Transaction) error {
 
 func createGenesisBlock() *proto.Block {
 	privKey := crypto.NewPrivateKeyFromSeedStr(godSeed)
-
 	block := &proto.Block{
 		Header: &proto.Header{
 			Version: 1,
@@ -198,7 +209,6 @@ func createGenesisBlock() *proto.Block {
 		},
 	}
 	block.Transactions = append(block.Transactions, tx)
-
 	types.SignBlock(privKey, block)
 
 	return block
